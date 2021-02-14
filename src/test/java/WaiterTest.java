@@ -1,7 +1,4 @@
-import org.junit.After;
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -30,7 +27,7 @@ public class WaiterTest {
 
     @ParameterizedTest
     @MethodSource("person")
-    void Names(String login, String password) throws InterruptedException {
+    void loginTest (String login, String password)  {
 
         driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
 
@@ -48,16 +45,16 @@ public class WaiterTest {
         passwordInput.sendKeys(password);
         loginButton.click();
 
-        WebElement element = driver.findElement(By.cssSelector("span.uname"));
+        WebElement usernameOutput = driver.findElement(By.cssSelector("span.uname"));
         FluentWait<WebDriver> wait = new FluentWait<WebDriver>(driver)
                 .withTimeout(5, TimeUnit.SECONDS)
                 .pollingEvery(200, TimeUnit.MILLISECONDS);
-        wait.until(ExpectedConditions.textToBePresentInElement(element, "Selenium Test"));
+        wait.until(ExpectedConditions.textToBePresentInElement(usernameOutput, "Selenium Test"));
 
 
-        String result = driver.findElement(By.cssSelector("span.uname")).getText();
-        String expectedname = "Selenium Test";
-        Assert.assertEquals(expectedname, result);
+        String actualName = driver.findElement(By.cssSelector("span.uname")).getText();
+        String expectedName = "Selenium Test";
+        Assert.assertEquals(expectedName, actualName);
     }
 
     private static Stream<Arguments> person() {

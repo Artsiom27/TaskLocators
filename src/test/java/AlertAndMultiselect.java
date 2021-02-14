@@ -7,8 +7,9 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.openqa.selenium.support.ui.ExpectedConditions.visibilityOfElementLocated;
 
@@ -24,65 +25,63 @@ public class AlertAndMultiselect {
     public void selectMultipelValues() {
         driver.get("https://www.seleniumeasy.com/test/basic-select-dropdown-demo.html");
 
-        Select selectObject = new Select(driver.findElement(By.id("multi-select")));
-        selectObject.selectByVisibleText("Florida");
-        selectObject.selectByIndex(3);
-        selectObject.selectByValue("Washington");
+        Select objectsList = new Select(driver.findElement(By.id("multi-select")));
+        objectsList.selectByVisibleText("Florida");
+        objectsList.selectByIndex(3);
+        objectsList.selectByValue("Washington");
         WebElement loginButton = driver.findElement(By.cssSelector("#printAll"));
         loginButton.click();
 
-        List<WebElement> selectedOptions = selectObject.getAllSelectedOptions();
-        List objects = new ArrayList();
-        for (WebElement selectedOption : selectedOptions)
-            objects.add(selectedOption.getText());
+        List<WebElement> selectedOptions = objectsList.getAllSelectedOptions();
+        List<String> selectedObjects = selectedOptions
+                .stream()
+                .map(x -> x.getText())
+                .collect(Collectors.toList());
 
-        List<String> list = new ArrayList<>();
-        list.add("Florida");
-        list.add("New York");
-        list.add("Washington");
-
-        Assert.assertEquals(list, objects);
+        List<String> expectedObjects = Arrays.asList("Florida", "New York", "Washington");
+        Assert.assertEquals(expectedObjects, selectedObjects);
     }
 
     @Test
-    public void alert1Accept() {
+    public void confirmBoxAccept() {
         driver.get("https://www.seleniumeasy.com/test/javascript-alert-box-demo.html");
-        WebElement alert1Button = driver.findElement(By.cssSelector("[onclick=\"myConfirmFunction()\"]"));
+        WebElement confirmButton = driver.findElement(By.cssSelector("[onclick=\"myConfirmFunction()\"]"));
 
-        alert1Button.click();
+        confirmButton.click();
         Alert alert = driver.switchTo().alert();
         alert.accept();
-        String result = driver.findElement(By.cssSelector("#confirm-demo")).getText();
-        String expectedname = "You pressed OK!";
-        Assert.assertEquals(expectedname, result);
+        String actualName = driver.findElement(By.cssSelector("#confirm-demo")).getText();
+        String expectedName = "You pressed OK!";
+        Assert.assertEquals(expectedName, actualName);
     }
 
     @Test
-    public void alert1Dismiss() {
+    public void confirmBoxDismiss() {
         driver.get("https://www.seleniumeasy.com/test/javascript-alert-box-demo.html");
-        WebElement alert1Button = driver.findElement(By.cssSelector("[onclick=\"myConfirmFunction()\"]"));
-        alert1Button.click();
-        Alert alert1 = driver.switchTo().alert();
-        alert1.dismiss();
-        String result1 = driver.findElement(By.cssSelector("#confirm-demo")).getText();
-        String expectedname1 = "You pressed Cancel!";
-        Assert.assertEquals(expectedname1, result1);
+        WebElement confirmButton = driver.findElement(By.cssSelector("[onclick=\"myConfirmFunction()\"]"));
+        confirmButton.click();
+
+        Alert alert = driver.switchTo().alert();
+        alert.dismiss();
+        String actualName = driver.findElement(By.cssSelector("#confirm-demo")).getText();
+        String expectedName = "You pressed Cancel!";
+        Assert.assertEquals(expectedName, actualName);
 
     }
 
     @Test
-    public void alert2() {
+    public void promptBox() {
         driver.get("https://www.seleniumeasy.com/test/javascript-alert-box-demo.html");
-        WebElement alert2Button = driver.findElement(By.cssSelector("[onclick=\"myPromptFunction()\"]"));
-        alert2Button.click();
+        WebElement promptButton = driver.findElement(By.cssSelector("[onclick=\"myPromptFunction()\"]"));
+        promptButton.click();
 
         Alert alert = driver.switchTo().alert();
         String message = alert.getText();
         alert.sendKeys("start");
         alert.accept();
-        String result1 = driver.findElement(By.cssSelector("#prompt-demo")).getText();
-        String expectedname1 = "You have entered 'start' !";
-        Assert.assertEquals(expectedname1, result1);
+        String actualName = driver.findElement(By.cssSelector("#prompt-demo")).getText();
+        String expectedName = "You have entered 'start' !";
+        Assert.assertEquals(expectedName, actualName);
 
     }
 
@@ -93,9 +92,9 @@ public class AlertAndMultiselect {
         waitButton.click();
 
         WebDriverWait wait = new WebDriverWait(driver, 5);
-        WebElement gettingOutput = wait.until(visibilityOfElementLocated(By.cssSelector("#loading > img")));
-        WebElement gettingOutput1 = driver.findElement(By.cssSelector("#loading > img"));
-        Assert.assertTrue(gettingOutput1.isDisplayed());
+        WebElement expectedUserImg = wait.until(visibilityOfElementLocated(By.cssSelector("#loading > img")));
+        WebElement actualUser = driver.findElement(By.cssSelector("#loading > img"));
+        Assert.assertTrue(actualUser.isDisplayed());
 
     }
 
