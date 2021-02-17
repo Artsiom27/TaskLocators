@@ -8,6 +8,9 @@ public class TableSort {
     private String startDate;
     private int salary;
 
+    public TableSort() {
+    }
+
     public TableSort(String name, String position, String office, int age, String startDate, int salary) {
         this.name = name;
         this.position = position;
@@ -47,4 +50,7 @@ public class TableSort {
     }
 
 }
+
+
+
 

@@ -48,6 +48,7 @@ public class Point8and9 {
 
         Assert.assertTrue(nameOf10.isDisplayed());
         Assert.assertTrue(number.isDisplayed());
+
     }
 
     @AfterEach
