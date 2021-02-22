@@ -1,5 +1,4 @@
 import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.Select;
@@ -8,20 +7,22 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class MainTableSort {
+    private static ChromeDriver driver;
+
     public static void main(String[] args) {
-        TableSort employees = new TableSort();
-        ArrayList<TableSort> persons = init(employees);
-        filterResult(persons);
+        driver = new ChromeDriver();
+        driver.get("https://www.seleniumeasy.com/test/table-sort-search-demo.html");
+
+        List<Employee> employeesFromAutoDepartment = getEmployees(20, 40000);
+        List<Employee> employeesFromDevopsDepartment = getEmployees(40, 100000);
+
+        driver.quit();
     }
 
-    public static ArrayList<TableSort> init(TableSort sort) {
-        ArrayList<TableSort> persons = new ArrayList<TableSort>();
-
-        WebDriver driver = new ChromeDriver();
-        driver.get("https://www.seleniumeasy.com/test/table-sort-search-demo.html");
+    public static List<Employee> getEmployees(int ageMin, int salaryMax) {
+        ArrayList<Employee> employees = new ArrayList<Employee>();
         Select dropdown = new Select(driver.findElement(By.cssSelector("label > select")));
         dropdown.selectByVisibleText("100");
-
 
         List<WebElement> elements = driver.findElements(By.cssSelector("tbody > tr"));
         for (WebElement element : elements) {
@@ -29,7 +30,6 @@ public class MainTableSort {
             WebElement positionElement = element.findElement(By.cssSelector("tr > td:nth-child(2)"));
             WebElement officeElement = element.findElement(By.cssSelector("tr > td:nth-child(3)"));
             WebElement ageElement = element.findElement(By.cssSelector("tr > td:nth-child(4)"));
-            WebElement startDateElement = element.findElement(By.cssSelector("tr > td:nth-child(5)"));
             WebElement salaryElement = element.findElement(By.cssSelector("tr > td:nth-child(6)"));
 
             String name = nameElement.getText();
@@ -37,7 +37,6 @@ public class MainTableSort {
             String office = officeElement.getText();
             String ageText = ageElement.getText();
             int age = Integer.parseInt(ageText);
-            String startDate = startDateElement.getText();
             String salaryText = salaryElement.getText();
 
             String[] split = salaryText.split("[\\$ / y,]");
@@ -45,21 +44,17 @@ public class MainTableSort {
             String salaryString = String.join(delimiter, split);
             int salary = Integer.parseInt(salaryString);
 
-            sort = new TableSort(name, position, office, age, startDate, salary);
-            persons.add(sort);
+
+            Employee sort = new Employee(name, position, office, age, salary);
+            employees.add(sort);
         }
-        driver.quit();
 
-        return persons;
-    }
+        List<Employee> employeesFilted = employees.stream()
+                .filter(p -> p.getAge() > ageMin)
+                .filter(p -> p.getSalary() <= salaryMax)
+                .collect(Collectors.toList());
 
-    public static List<TableSort> filterResult(ArrayList<TableSort> person) {
-
-        List<TableSort> personsFilted = person.stream()
-                .filter(p -> p.getAge() > 45).filter(p -> p.getSalary() <= 300000).collect(Collectors.toList());
-        System.out.println(personsFilted);
-
-        return personsFilted;
+        return employeesFilted;
     }
 }
 
